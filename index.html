@@ -39,6 +39,8 @@
     <aside class="sidebar">
       <button class="navBtn active" data-view="dashboard"><span class="navIcon">⌂</span><span class="navLabel">Dashboard</span></button>
       <button class="navBtn playerOnly" data-view="game"><span class="navIcon">♟</span><span class="navLabel">Play AI</span></button>
+      <button class="navBtn playerOnly" data-view="arena"><span class="navIcon">♜</span><span class="navLabel">Play Online</span></button>
+      <button class="navBtn" data-view="rankings"><span class="navIcon">🏆</span><span class="navLabel">Rankings</span></button>
       <button class="navBtn playerOnly" data-view="training"><span class="navIcon">◎</span><span class="navLabel">Training</span></button>
       <button class="navBtn playerOnly" data-view="analysis"><span class="navIcon">◫</span><span class="navLabel">Analysis</span></button>
       <button class="navBtn coachOnly" data-view="coach"><span class="navIcon">◉</span><span class="navLabel">Coach Center</span></button>
@@ -64,7 +66,7 @@
       </div>
 
       <div id="gameView" class="view">
-        <div class="headline"><div><h1>AI Arena</h1><p>Train against the backend AI engine with authoritative clocks and reconnect recovery. Official Stockfish 19 powers every AI game. No basic fallback.</p></div><div class="btnRow"><button id="newGameBtn" class="btn primary">New Game</button><button id="resumeBtn" class="btn">Resume Latest</button></div></div>
+        <div class="headline"><div><h1>AI Arena</h1><p>Train against the backend AI engine with authoritative clocks and reconnect recovery. Official Stockfish 19 powers every AI game. No basic fallback.</p></div><div class="btnRow"><button id="newGameBtn" class="btn primary">New Game</button><button id="resumeBtn" class="btn">Resume Latest</button><button id="savedGamesBtn" class="btn">Saved Games</button><button id="downloadPgnBtn" class="btn">Download PGN</button><button id="analyzeGameBtn" class="btn">Analyze Game</button></div></div>
         <div class="gameLayout">
           <div class="card boardCard">
             <div class="boardHeader"><div id="turnBanner" class="turnBanner"><span id="turnDot" class="turnDot white"></span><span id="turnText">Start a game to begin</span></div><div class="boardTools"><label class="muted" for="boardTheme">Board</label><select id="boardTheme" class="select compactSelect" aria-label="Board color theme"><option value="emerald">Emerald</option><option value="classic">Classic</option><option value="contrast">High contrast</option></select><button id="soundBtn" class="btn iconBtn" type="button" aria-pressed="true" title="Toggle move sounds">🔊</button></div></div>
@@ -84,11 +86,29 @@
         </div>
       </div>
 
+      <div id="arenaView" class="view">
+        <div class="headline"><div><h1>Online Chess Arena</h1><p>Challenge a real player with their unique ID. Live moves, clocks and real-time reconnects.</p></div><button id="arenaRefresh" class="btn">Refresh</button></div>
+        <div class="grid cards3">
+          <div class="card"><h3>My Chess Identity</h3><div class="metric" id="arenaPlayerCode">—</div><p class="muted">Share this ID with your opponent.</p><button class="btn" id="arenaCopyId">Copy Player ID</button><div id="arenaMyStats" class="muted" style="margin-top:12px">Loading rating…</div></div>
+          <div class="card"><h3>Find an opponent</h3><div class="stack"><input class="input" id="arenaSearch" maxlength="50" placeholder="CH-000001 or username"><button id="arenaFind" class="btn blue">Search Players</button><div id="arenaSearchResults" class="stack muted">Search by Player ID or username.</div></div></div>
+          <div class="card"><h3>Challenge settings</h3><div class="stack"><label for="arenaTime">Time Control</label><select class="select" id="arenaTime"><option value="300,0">5 + 0</option><option value="600,0" selected>10 + 0</option><option value="600,5">10 + 5</option><option value="900,10">15 + 10</option><option value="1800,0">30 + 0</option></select><label class="muted"><input type="checkbox" id="arenaRated" checked> Ranked match (Elo and RP)</label><div class="muted" id="arenaOpponentLabel">Choose a player from search.</div><button id="arenaChallenge" class="btn primary" disabled>Send Challenge</button></div></div>
+        </div>
+        <div class="card" style="margin-top:16px"><div class="headline"><h3>Incoming & Pending Challenges</h3></div><div class="stack" id="arenaInbox">No pending challenges.</div></div>
+        <div id="pvpGamePanel" class="card hidden" style="margin-top:16px">
+          <div class="headline"><div><h2 id="pvpMatchTitle">Online Match</h2><p id="pvpStatus" class="muted">Waiting…</p></div><div class="btnRow"><button id="pvpOfferDraw" class="btn">Offer Draw</button><button id="pvpResign" class="btn danger">Resign</button></div></div>
+          <div class="gameLayout"><div class="boardCard"><div class="clockRow"><div class="clock"><span id="pvpWhiteName">White</span><strong id="pvpClockW">10:00</strong></div><div class="clock"><span id="pvpBlackName">Black</span><strong id="pvpClockB">10:00</strong></div></div><div id="pvpBoard" class="board" role="grid" aria-label="Live online chess board"></div></div><div class="stack"><div id="pvpMoves" class="moveList" aria-live="polite"></div><p class="muted">Tap your piece and then a highlighted legal destination. Clocks are controlled by the server. Ranked PvP has no engine hints.</p></div></div>
+        </div>
+      </div>
+      <div id="rankingsView" class="view">
+        <div class="headline"><div><h1>Live Rankings</h1><p>Separate Online Elo and Reward Points. Only server-verified results are counted.</p></div><button id="rankingsRefresh" class="btn">Refresh</button></div>
+        <div class="card"><div class="btnRow" style="margin-bottom:12px"><button class="btn primary" data-ranking="rp">Reward Points</button><button class="btn" data-ranking="elo">PvP Elo</button><button class="btn" data-ranking="puzzles">Puzzles Solved</button></div><div class="tableWrap"><table><thead><tr><th>#</th><th>Player ID</th><th>Player</th><th>RP</th><th>PvP Elo</th><th>Solved</th><th>Tier</th></tr></thead><tbody id="rankingsBody"><tr><td colspan="7">Loading rankings…</td></tr></tbody></table></div></div>
+      </div>
       <div id="trainingView" class="view">
         <div class="headline"><div><h1>Training Lab</h1><p>Coach assignments and focused tactical practice.</p></div><button id="refreshTraining" class="btn">Refresh</button></div>
         <div class="grid cards3">
+          <div class="card" style="grid-column:1/-1"><h3>Daily Puzzle Sprint — Sudoku-style Challenge</h3><p class="muted">5 identical puzzles for everyone, one official attempt per Philippine day (midnight Manila reset). Highest accuracy wins; shortest server-recorded time breaks ties. No hints, no retries.</p><div class="btnRow"><button class="btn primary" id="startDailyPuzzle">Start / Resume Today's Challenge</button><button class="btn" id="refreshDailyLeaderboard">Refresh Sprint Rankings</button></div><div id="dailySprintStatus" class="muted">Not started today.</div><div class="tableWrap"><table><thead><tr><th>#</th><th>Player</th><th>Score</th><th>Elapsed</th></tr></thead><tbody id="dailySprintLeaderboard"><tr><td colspan="4">Loading…</td></tr></tbody></table></div></div>
           <div class="card" style="grid-column:1/-1"><h3>Assignments</h3><div id="assignmentList" class="stack muted">No assignments.</div></div>
-          <div class="card" style="grid-column:1/-1"><h3>Puzzle Session</h3><div id="puzzleBox" class="puzzleStage"><div id="puzzleBoard" class="puzzleBoard" role="grid" aria-label="Puzzle chess board"></div><div class="stack"><div class="muted">Load a puzzle, then tap your piece and destination. You can also enter a move such as e2e4.</div><input id="puzzleMove" class="input" maxlength="6" placeholder="e2e4" aria-label="Puzzle move in UCI notation" autocomplete="off"><div class="btnRow"><button id="loadPuzzle" class="btn blue">New Puzzle</button><button id="submitPuzzle" class="btn primary" disabled>Check Move</button></div><div id="puzzleMeta" class="muted" aria-live="polite"></div></div></div></div>
+          <div class="card" style="grid-column:1/-1"><h3>Puzzle Session</h3><div id="puzzleBox" class="puzzleStage"><div id="puzzleBoard" class="puzzleBoard" role="grid" aria-label="Puzzle chess board"></div><div class="stack"><div class="muted"><strong>How to solve:</strong> (1) Read the objective (2) Tap one of your pieces (3) Tap its destination (4) Press Check Move. Practice safely; no answers are sent in advance.</div><label for="puzzleDifficulty">Puzzle difficulty</label><select id="puzzleDifficulty" class="select"><option value="all">All levels</option><option value="easy">Easy</option><option value="moderate">Moderate</option><option value="difficult">Difficult</option><option value="extreme">Extreme</option></select><input id="puzzleMove" class="input" maxlength="6" placeholder="e2e4" aria-label="Puzzle move in UCI notation" autocomplete="off"><div class="btnRow"><button id="loadPuzzle" class="btn blue">New Puzzle</button><button id="submitPuzzle" class="btn primary" disabled>Check Move</button><button id="puzzleReveal" class="btn" disabled>Show Solution (Practice Only)</button></div><div id="puzzleMeta" class="muted" aria-live="polite"></div></div></div></div>
         </div>
       </div>
 
@@ -106,7 +126,7 @@
         <div class="headline"><div><h1>Administration</h1><p>Create athlete/coach accounts and trigger a safe SQLite backup.</p></div><button id="backupBtn" class="btn">Create Backup</button></div>
         <div class="grid cards3">
           <div class="card"><h3>Create Account</h3><div class="stack"><input id="newUsername" class="input" placeholder="Username"><input id="newDisplay" class="input" placeholder="Display name"><input id="newPassword" class="input" type="password" placeholder="Temporary password (10+ chars)"><select id="newRole" class="select"><option value="player">Player</option><option value="coach">Coach</option></select><button id="createUserBtn" class="btn primary">Create Account</button></div></div>
-          <div class="card"><h3>System Settings</h3><div class="stack"><input id="settingAppName" class="input" placeholder="App name"><select id="settingDifficulty" class="select"><option value="adaptive">Adaptive</option><option value="master">Master</option><option value="grandmaster">Grandmaster</option><option value="elite">Elite</option></select><label class="muted"><input id="settingMaintenance" type="checkbox"> Maintenance mode</label><label class="muted"><input id="settingRegistration" type="checkbox"> Allow registration flag</label><button id="saveSettingsBtn" class="btn">Save Settings</button></div></div><div class="card"><h3>Deployment Status</h3><div id="adminStatus" class="analysisBox muted">Loading…</div></div>
+          <div class="card"><h3>System Settings</h3><div class="stack"><input id="settingAppName" class="input" placeholder="App name"><select id="settingDifficulty" class="select"><option value="adaptive">Adaptive</option><option value="master">Master</option><option value="grandmaster">Grandmaster</option><option value="elite">Elite</option></select><label class="muted"><input id="settingMaintenance" type="checkbox"> Maintenance mode</label><label class="muted"><input id="settingRegistration" type="checkbox"> Allow registration flag</label><button id="saveSettingsBtn" class="btn">Save Settings</button></div></div><div class="card"><h3>Deployment Status</h3><div id="adminStatus" class="analysisBox muted">Loading…</div><h3>Live Arena Monitor</h3><div id="adminLiveMonitor" class="analysisBox muted">Loading…</div></div>
         </div>
       </div>
     </section>
@@ -123,6 +143,7 @@
     <div class="modal"><h2>Create Athlete Account</h2><p class="muted">Registration is currently enabled by the administrator.</p><form id="registerForm" class="stack"><div class="field"><label for="registerDisplay">DISPLAY NAME</label><input id="registerDisplay" class="input" maxlength="80" autocomplete="name" required></div><div class="field"><label for="registerUser">USERNAME</label><input id="registerUser" class="input" maxlength="50" autocomplete="username" pattern="[A-Za-z0-9._-]{3,50}" required></div><div class="field"><label for="registerPass">PASSWORD</label><input id="registerPass" class="input" type="password" minlength="10" maxlength="128" autocomplete="new-password" required></div><div class="field"><label for="registerConfirm">CONFIRM PASSWORD</label><input id="registerConfirm" class="input" type="password" minlength="10" maxlength="128" autocomplete="new-password" required></div><div class="btnRow"><button id="registerBtn" class="btn primary" type="submit">Create & Sign In</button><button id="cancelRegister" class="btn" type="button">Cancel</button></div><div id="registerMsg" class="muted" aria-live="polite"></div></form></div>
   </div>
 
+  <div id="savedGamesOverlay" class="overlay hidden"><div class="modal"><h2>Saved AI Games</h2><p class="muted">Choose a game to resume on any signed-in device, or export its PGN.</p><div id="savedGamesList" class="stack">Loading…</div><button id="closeSavedGames" class="btn">Close</button></div></div>
   <div id="newGameOverlay" class="overlay hidden">
     <div class="modal"><h2>New AI Game</h2><div class="stack"><div class="field"><label>AI LEVEL</label><select id="difficulty" class="select"><option value="adaptive">Adaptive</option><option value="master">Master</option><option value="grandmaster" selected>Grandmaster</option><option value="elite">Elite / Full Strength</option></select></div><div class="field"><label>YOUR COLOR</label><select id="humanColor" class="select"><option value="w">White</option><option value="b">Black</option></select></div><div class="field"><label>TIME CONTROL</label><select id="timeControl" class="select"><option value="300,0">5 + 0</option><option value="600,0" selected>10 + 0</option><option value="600,5">10 + 5</option><option value="900,10">15 + 10</option><option value="1800,0">30 + 0</option></select></div><div class="btnRow"><button id="confirmNewGame" class="btn primary">Start Game</button><button id="cancelNewGame" class="btn">Cancel</button></div></div></div>
   </div>
@@ -139,7 +160,7 @@
     const isLocalBackend = location.hostname === 'chess.mdmsportal.uk' || (['localhost','127.0.0.1'].includes(location.hostname) && location.port === '1200');
     const API_ORIGIN = isLocalBackend ? location.origin : REMOTE_API_ORIGIN;
     const $ = (id)=>document.getElementById(id);
-    const state={token:localStorage.getItem('chess_token')||'',user:null,socket:null,server:null,config:null,game:null,selected:null,legalMoves:[],legalRequest:0,lastMove:null,clockSync:null,engineThinking:false,movePending:false,puzzles:[],currentPuzzle:null,puzzleSelected:null,assignPlayerId:null,pendingPromotion:null,deferredInstall:null,soundEnabled:localStorage.getItem('chess_sound')!=='off'};
+    const state={dailyMode:false,dailyRun:null,pvp:null,pvpSelected:null,pvpLegal:[],pvpPending:false,pvpClock:null,arenaTarget:null,rankType:'rp',token:localStorage.getItem('chess_token')||'',user:null,socket:null,server:null,config:null,game:null,selected:null,legalMoves:[],legalRequest:0,lastMove:null,clockSync:null,engineThinking:false,movePending:false,puzzles:[],currentPuzzle:null,puzzleSelected:null,assignPlayerId:null,pendingPromotion:null,deferredInstall:null,soundEnabled:localStorage.getItem('chess_sound')!=='off'};
     const pieceChar={K:'♔',Q:'♕',R:'♖',B:'♗',N:'♘',P:'♙',k:'♚',q:'♛',r:'♜',b:'♝',n:'♞',p:'♟'};
     const pieceName={K:'White king',Q:'White queen',R:'White rook',B:'White bishop',N:'White knight',P:'White pawn',k:'Black king',q:'Black queen',r:'Black rook',b:'Black bishop',n:'Black knight',p:'Black pawn'};
     const errorText={INVALID_CREDENTIALS:'Incorrect username or password.',UNAUTHORIZED:'Your session has expired. Please sign in again.',ENGINE_UNAVAILABLE:'AI engine is not ready yet.',MAINTENANCE_MODE:'Training is temporarily paused for maintenance.',USERNAME_TAKEN:'That username is already in use.',REGISTRATION_DISABLED:'Athlete registration is currently disabled.',INVALID_USERNAME:'Use 3–50 letters, numbers, dots, underscores, or hyphens for the username.',PASSWORD_TOO_SHORT:'Password must contain at least 10 characters.',POSITION_VERSION_MISMATCH:'The board changed. It has been refreshed.',ILLEGAL_MOVE:'That move is not legal.',NOT_PLAYER_TURN:'Wait for your turn.',DRAW_NOT_CLAIMABLE:'A draw cannot be claimed in this position.',INVALID_PUZZLE_MOVE:'Select a piece and destination first, or enter a move such as e2e4.'};
@@ -154,7 +175,7 @@
     async function loadSocketClient(){if(window.io)return;await new Promise((resolve,reject)=>{const s=document.createElement('script');s.src=API_ORIGIN+'/socket.io/socket.io.js';s.onload=resolve;s.onerror=()=>reject(new Error('SOCKET_CLIENT_UNAVAILABLE'));document.head.appendChild(s)})}
     async function connectSocket(){if(!state.token)return;try{await loadSocketClient();if(state.socket)state.socket.disconnect();state.socket=io(API_ORIGIN,{path:'/socket.io',transports:['polling','websocket'],auth:{token:state.token},reconnection:true,reconnectionAttempts:Infinity,reconnectionDelay:800,reconnectionDelayMax:5000});bindSocket(state.socket)}catch(e){toast('Live connection unavailable: '+e.message,'bad')}}
     function bindSocket(s){
-      s.on('connect',()=>{checkHealth();if(state.game?.id)s.emit('game:resume',{gameId:state.game.id},()=>{})});
+      s.on('connect',()=>{checkHealth();if(state.game?.id)s.emit('game:resume',{gameId:state.game.id},()=>{});const matchId=state.pvp?.id||localStorage.getItem('chess_last_pvp');if(matchId)s.emit('pvp:join',{gameId:matchId},r=>{if(r?.ok)renderPvp(r.snapshot)});refreshArena().catch(()=>{});});
       s.on('disconnect',()=>{state.movePending=false;setServer(false,'Socket disconnected. Reconnecting automatically…');renderTurn()});
       s.on('connect_error',(e)=>{if(e.message==='UNAUTHORIZED')logout(false)});
       s.on('session:ready',(d)=>{state.user=d.user;applyRole()});
@@ -168,6 +189,15 @@
       s.on('analysis:progress',({percent})=>{$('analysisContent').textContent=`Analyzing game… ${percent}%`});
       s.on('analysis:completed',(a)=>{renderAnalysis(a);toast('Analysis completed.')});
       s.on('training:result',()=>{toast('New training assignment received.');loadTraining()});
+      s.on('pvp:challenge-received',()=>{toast('New online chess challenge received!');refreshArena()});
+      s.on('pvp:inbox-updated',refreshArena);
+      s.on('arena:presence-updated',()=>{if(document.querySelector('#arenaView.active'))findArenaPlayers().catch(()=>{});});
+      s.on('pvp:started',snap=>{renderPvp(snap);switchView('arena');toast('Your online match has started!')});
+      s.on('pvp:snapshot',snap=>{const ended=snap.status==='ended'&&state.pvp?.status==='active';renderPvp(snap);if(ended){toast('Online match completed: '+(snap.result||''));refreshArena();loadRankings()}});
+      s.on('pvp:move-rejected',e=>{state.pvpPending=false;toast(e.error||'Move rejected','bad');resumePvp()});
+      s.on('pvp:clock',d=>{if(state.pvp?.id===d.gameId){state.pvpClock={clocks:d.clocks,activeColor:d.activeColor,at:Date.now()};renderPvpClocks()}});
+      s.on('rank:updated',()=>{if(state.user?.role==='player')refreshArena();loadRankings()});
+      s.on('player:progress-updated',()=>{if(['admin','coach'].includes(state.user?.role))loadCoach()});
       s.on('system:error',(e)=>toast(e.message||e.error||'System error','bad'));
       s.on('server:maintenance',(e)=>toast(e.message||'Server maintenance','warn'));
     }
@@ -177,10 +207,10 @@
     async function register(e){e.preventDefault();const password=$('registerPass').value;if(password!==$('registerConfirm').value){$('registerMsg').textContent='Passwords do not match.';return}$('registerBtn').disabled=true;$('registerMsg').textContent='Creating account…';try{const d=await api('/api/auth/register',{method:'POST',body:JSON.stringify({displayName:$('registerDisplay').value.trim(),username:$('registerUser').value.trim(),password})});$('registerOverlay').classList.add('hidden');$('registerForm').reset();$('registerMsg').textContent='';await acceptSession(d)}catch(err){$('registerMsg').textContent=friendly(err.message)}finally{$('registerBtn').disabled=false}}
     async function restoreSession(){if(!state.token)return false;try{const d=await api('/api/auth/me');state.user=d.user;localStorage.setItem('chess_user',JSON.stringify(state.user));showApp();await connectSocket();return true}catch(e){if(e.status===401||e.status===403){localStorage.removeItem('chess_token');localStorage.removeItem('chess_user');state.token='';return false}try{state.user=JSON.parse(localStorage.getItem('chess_user')||'null')}catch{}if(state.user){showApp();toast('Training server offline. Cached app shell opened; AI games are disabled.','warn');return true}return false}}
     function showApp(){$('loginOverlay').classList.add('hidden');$('appShell').classList.remove('hidden');applyRole();$('welcomeTitle').textContent=`Train smarter, ${state.user?.displayName||state.user?.username||'athlete'}.`}
-    async function logout(callApi=true){try{if(callApi&&state.token)await api('/api/auth/logout',{method:'POST'})}catch{}state.socket?.disconnect();state.token='';state.user=null;state.game=null;state.selected=null;state.legalMoves=[];localStorage.removeItem('chess_token');localStorage.removeItem('chess_user');localStorage.removeItem('last_game_id');$('appShell').classList.add('hidden');$('loginOverlay').classList.remove('hidden')}
+    async function logout(callApi=true){try{if(callApi&&state.token)await api('/api/auth/logout',{method:'POST'})}catch{}state.socket?.disconnect();state.pvp=null;state.token='';state.user=null;state.game=null;state.selected=null;state.legalMoves=[];localStorage.removeItem('chess_token');localStorage.removeItem('chess_user');localStorage.removeItem('last_game_id');$('appShell').classList.add('hidden');$('loginOverlay').classList.remove('hidden')}
     function applyRole(){if(!state.user)return;$('miniName').textContent=state.user.displayName;$('miniRole').textContent=state.user.role.toUpperCase();document.querySelectorAll('.playerOnly').forEach(n=>n.classList.toggle('hidden',state.user.role!=='player'));document.querySelectorAll('.coachOnly').forEach(n=>n.classList.toggle('hidden',!['coach','admin'].includes(state.user.role)));document.querySelectorAll('.adminOnly').forEach(n=>n.classList.toggle('hidden',state.user.role!=='admin'))}
 
-    function switchView(view){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));$(view+'View')?.classList.add('active');document.querySelectorAll('.navBtn[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===view));if(view==='dashboard')refreshProgress();if(view==='training')loadTraining();if(view==='analysis')refreshAnalysis();if(view==='coach')loadCoach();if(view==='admin'){checkHealth();loadAdminSettings()}}
+    function switchView(view){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));$(view+'View')?.classList.add('active');document.querySelectorAll('.navBtn[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===view));if(view==='dashboard')refreshProgress();if(view==='arena')refreshArena();if(view==='rankings')loadRankings();if(view==='training'){loadTraining();loadDailyLeaderboard()}if(view==='analysis')refreshAnalysis();if(view==='coach')loadCoach();if(view==='admin'){checkHealth();loadAdminSettings();loadAdminMonitor()}}
 
     async function refreshProgress(){if(!state.user)return;try{if(state.user.role==='player'){const d=await api('/api/players/me/progress');const t=d.totals;$('mGames').textContent=t.games;$('mWins').textContent=t.wins;$('mPuzzle').textContent=t.puzzleAttempts?Math.round(t.puzzleCorrect/t.puzzleAttempts*100)+'%':'—';$('recentResults').innerHTML=d.recent.length?d.recent.slice(0,5).map(g=>`<div>${esc(g.result||'Active')} · ${esc(g.difficulty)} <span class="muted">${fmtDate(g.created_at)}</span></div>`).join(''):'No games yet.';const a=d.analyses?.[0]?.summary;$('currentFocus').textContent=a?.trainingPriorities?.join('\n• ')||'Play games to generate personalized training priorities.';if(a)$('currentFocus').textContent='• '+a.trainingPriorities.join('\n• ')}else if(['coach','admin'].includes(state.user.role)){const d=await api('/api/coach/players');$('mGames').textContent=d.players.reduce((n,p)=>n+p.progress.games,0);$('mWins').textContent=d.players.reduce((n,p)=>n+p.progress.wins,0);$('mPuzzle').textContent=d.players.length+' athletes'}}catch(e){console.warn(e)}}
 
@@ -220,19 +250,71 @@
 
     async function loadTraining(){if(state.user?.role!=='player')return;try{const [a,p]=await Promise.all([api('/api/training/assignments'),api('/api/training/puzzles?limit=20')]);$('assignmentList').innerHTML=a.assignments.length?a.assignments.map(x=>`<div class="card" style="padding:12px"><strong>${esc(x.title)}</strong><div class="muted">${esc(x.description)}</div><small>${esc(x.category)} · ${x.completed_count}/${x.target_count}</small></div>`).join(''):'No assignments.';state.puzzles=p.puzzles}catch(e){toast('Training load failed: '+e.message,'bad')}}
     function puzzleSquares(){const files='abcdefgh'.split(''),ranks='12345678'.split('');if(state.currentPuzzle?.side_to_move==='b')return ranks.flatMap(r=>[...files].reverse().map(f=>f+r));return [...ranks].reverse().flatMap(r=>files.map(f=>f+r))}
-    function renderPuzzleBoard(){const board=$('puzzleBoard');board.innerHTML='';if(!state.currentPuzzle){board.innerHTML='<div class="empty" style="grid-column:1/-1;align-self:center">Choose New Puzzle</div>';return}const pos=parseFen(state.currentPuzzle.fen);for(const sq of puzzleSquares()){const file=sq.charCodeAt(0)-97,rank=Number(sq[1]),p=pos[sq],el=document.createElement('button');el.type='button';el.className='sq '+(((file+rank)%2)?'dark':'light');if(state.puzzleSelected===sq)el.classList.add('selected');el.setAttribute('role','gridcell');el.setAttribute('aria-label',`${sq}${p?' '+pieceName[p]:''}`);if(p){const span=document.createElement('span');span.className='piece '+(p===p.toUpperCase()?'whitePiece':'blackPiece');span.textContent=pieceChar[p];el.appendChild(span)}el.onclick=()=>puzzleSquareClick(sq,p);board.appendChild(el)}}
+    function renderPuzzleBoard(){const board=$('puzzleBoard');board.innerHTML='';if(!state.currentPuzzle){board.innerHTML='<div class="empty" style="grid-column:1/-1;align-self:center">Choose New Puzzle</div>';return}const pos=parseFen(state.currentPuzzle.fen);for(const sq of puzzleSquares()){const file=sq.charCodeAt(0)-97,rank=Number(sq[1]),p=pos[sq],el=document.createElement('button');el.type='button';el.className='sq '+(((file+rank)%2)?'dark':'light');if(state.puzzleSelected===sq)el.classList.add('selected');if(state.puzzleSelected&&state.currentPuzzle.legalMoves?.some(m=>m.from===state.puzzleSelected&&m.to===sq))el.classList.add('legal','quietTarget');el.setAttribute('role','gridcell');el.setAttribute('aria-label',`${sq}${p?' '+pieceName[p]:''}`);if(p){const span=document.createElement('span');span.className='piece '+(p===p.toUpperCase()?'whitePiece':'blackPiece');span.textContent=pieceChar[p];el.appendChild(span)}el.onclick=()=>puzzleSquareClick(sq,p);board.appendChild(el)}}
     function normalizePuzzleMove(value){return String(value||'').toLowerCase().trim().replace(/[\s-]+/g,'')}
-    function updatePuzzleSubmit(){const move=normalizePuzzleMove($('puzzleMove').value),valid=/^[a-h][1-8][a-h][1-8][qrbn]?$/.test(move);$('submitPuzzle').disabled=!state.currentPuzzle||state.currentPuzzle.solved||!valid;return valid?move:''}
-    function puzzleSquareClick(sq,piece){if(!state.currentPuzzle||state.currentPuzzle.solved)return;const side=state.currentPuzzle.side_to_move,isOwn=piece&&(side==='w'?piece===piece.toUpperCase():piece===piece.toLowerCase());if(!state.puzzleSelected){if(isOwn){state.puzzleSelected=sq;renderPuzzleBoard()}return}if(isOwn){state.puzzleSelected=sq;renderPuzzleBoard();return}const from=state.puzzleSelected,moving=parseFen(state.currentPuzzle.fen)[from],promotion=((moving==='P'&&sq[1]==='8')||(moving==='p'&&sq[1]==='1'))?'q':'';$('puzzleMove').value=from+sq+promotion;state.puzzleSelected=null;renderPuzzleBoard();updatePuzzleSubmit();$('puzzleMove').focus()}
-    function loadPuzzle(){if(!state.puzzles.length)return toast('No puzzles available.');state.currentPuzzle={...state.puzzles[Math.floor(Math.random()*state.puzzles.length)],started:Date.now(),failures:0,solved:false};state.puzzleSelected=null;$('puzzleMove').value='';$('puzzleMeta').textContent=`Puzzle #${state.currentPuzzle.id} · ${state.currentPuzzle.theme} · Rating ${state.currentPuzzle.difficulty}\n${state.currentPuzzle.side_to_move==='w'?'White':'Black'} to move.`;renderPuzzleBoard();updatePuzzleSubmit()}
-    async function submitPuzzle(){if(!state.currentPuzzle)return toast('Load a puzzle first.');const move=updatePuzzleSubmit();if(!move){$('puzzleMeta').textContent+='\nSelect a piece and destination before checking.';return toast('INVALID_PUZZLE_MOVE','warn')}$('puzzleMove').value=move;$('submitPuzzle').disabled=true;try{const d=await api(`/api/training/puzzles/${state.currentPuzzle.id}/attempt`,{method:'POST',body:JSON.stringify({moveUci:move,responseMs:Date.now()-state.currentPuzzle.started})});if(d.correct){state.currentPuzzle.solved=true;toast('Correct! Strong calculation.');$('puzzleMeta').textContent+='\nCorrect — assignment progress updated.';await Promise.allSettled([refreshProgress(),loadTraining()])}else{state.currentPuzzle.failures++;toast('Not quite—recheck checks, captures, and threats.','bad');$('puzzleMeta').textContent+=state.currentPuzzle.failures>=2?`\nCoach line: ${d.expected}`:'\nNot quite. Try one more candidate move.'}}catch(e){toast(e.message,'bad')}finally{updatePuzzleSubmit()}}
+    function updatePuzzleSubmit(){const move=normalizePuzzleMove($('puzzleMove').value),valid=/^[a-h][1-8][a-h][1-8][qrbn]?$/.test(move);$('submitPuzzle').disabled=!state.currentPuzzle||(state.currentPuzzle.solved||state.currentPuzzle.attempted)||!valid;return valid?move:''}
+    function puzzleSquareClick(sq,piece){if(!state.currentPuzzle||(state.currentPuzzle.solved||state.currentPuzzle.attempted))return;const side=state.currentPuzzle.side_to_move,isOwn=piece&&(side==='w'?piece===piece.toUpperCase():piece===piece.toLowerCase());if(!state.puzzleSelected){if(isOwn){state.puzzleSelected=sq;renderPuzzleBoard()}return}if(isOwn){state.puzzleSelected=sq;renderPuzzleBoard();return}if(!state.currentPuzzle.legalMoves?.some(m=>m.from===state.puzzleSelected&&m.to===sq)){toast('That destination is not a legal move.','warn');return}const from=state.puzzleSelected,moving=parseFen(state.currentPuzzle.fen)[from],promotion=((moving==='P'&&sq[1]==='8')||(moving==='p'&&sq[1]==='1'))?'q':'';$('puzzleMove').value=from+sq+promotion;state.puzzleSelected=null;renderPuzzleBoard();updatePuzzleSubmit();$('puzzleMove').focus()}
+    async function loadPuzzle(){
+      state.dailyMode=false;state.dailyRun=null;try{const d=await api('/api/training/puzzles/next?difficulty='+encodeURIComponent($('puzzleDifficulty').value));state.currentPuzzle={...d.puzzle,solved:false,attempted:false};state.puzzleSelected=null;
+        $('puzzleMove').value='';$('puzzleMeta').textContent=`${d.puzzle.instructions}\nDifficulty: ${d.puzzle.difficulty}. First-time correct answers earn RP. You have one ranked attempt. Press Show Solution to practice without points.`;
+        $('puzzleReveal').disabled=false;renderPuzzleBoard();updatePuzzleSubmit();
+      }catch(e){toast(e.message,'warn');$('puzzleMeta').textContent=friendly(e.message)}
+    }
+    async function submitPuzzle(){if(state.dailyMode)return submitDailyPuzzle();if(!state.currentPuzzle)return toast('Load a puzzle first.');const move=updatePuzzleSubmit();if(!move)return toast('Select a piece and destination first.','warn');
+      $('submitPuzzle').disabled=true;try{const d=await api(`/api/training/puzzles/${state.currentPuzzle.id}/attempt`,{method:'POST',body:JSON.stringify({moveUci:move,sessionId:state.currentPuzzle.sessionId})});
+        state.currentPuzzle.attempted=true;state.currentPuzzle.solved=d.correct;$('puzzleReveal').disabled=false;
+        $('puzzleMeta').textContent=d.correct?`✅ Correct! +${d.earnedRP||0} RP · ${Math.round(d.elapsedMs/1000)} seconds. Tap New Puzzle to continue.`:'Not correct yet. Tap Show Solution to learn, or choose New Puzzle. No RP for a retry.';
+        toast(d.correct?`Great! +${d.earnedRP||0} RP`:'Try another puzzle or review the solution.',d.correct?'good':'warn');
+        await Promise.allSettled([refreshProgress(),loadTraining(),refreshArena()]);
+      }catch(e){toast(e.message,'bad')}finally{updatePuzzleSubmit()}
+    }
+    async function revealPuzzle(){if(state.dailyMode)return toast('Hints are disabled in the daily ranked challenge.','warn');if(!state.currentPuzzle)return;try{const d=await api('/api/training/puzzles/reveal',{method:'POST',body:JSON.stringify({sessionId:state.currentPuzzle.sessionId})});state.currentPuzzle.attempted=true;
+      $('puzzleMeta').textContent=`Practice solution: ${d.solution.slice(0,2)} → ${d.solution.slice(2,4)}. Find the piece on that square and see which tactic it demonstrates. No RP for revealing.`;
+      $('puzzleMove').value=d.solution;state.puzzleSelected=null;renderPuzzleBoard();updatePuzzleSubmit();
+    }catch(e){toast(e.message,'bad')}}
 
+    async function openSavedGames(){try{
+      const data=await api('/api/games?limit=30');
+      $('savedGamesList').innerHTML=(data.games||[]).map(g=>`<div class="card" style="padding:12px"><strong>${esc(g.difficulty)} · ${esc(g.status)} · ${esc(g.result||'Unfinished')}</strong><div class="muted">${fmtDate(g.created_at)} · ${esc(g.human_color==='w'?'White':'Black')}</div>
+        <div class="btnRow"><button class="btn blue" data-resume-game="${esc(g.id)}">Open</button><button class="btn" data-pgn-game="${esc(g.id)}">PGN</button></div></div>`).join('')||'<div class="muted">No saved games yet.</div>';
+      document.querySelectorAll('[data-resume-game]').forEach(b=>b.onclick=()=>{localStorage.setItem('last_game_id',b.dataset.resumeGame);$('savedGamesOverlay').classList.add('hidden');resumeLatest()});
+      document.querySelectorAll('[data-pgn-game]').forEach(b=>b.onclick=()=>downloadPgn(b.dataset.pgnGame));
+      $('savedGamesOverlay').classList.remove('hidden');
+    }catch(e){toast(e.message,'bad')}}
+    async function downloadPgn(id=state.game?.id){if(!id)return toast('Choose a game first.');try{
+      const r=await fetch(API_ORIGIN+'/api/games/'+encodeURIComponent(id)+'/pgn',{headers:{Authorization:'Bearer '+state.token},cache:'no-store'});
+      if(!r.ok)throw Error('PGN_EXPORT_FAILED');const blob=await r.blob(),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=id+'.pgn';a.click();setTimeout(()=>URL.revokeObjectURL(url),2000);
+    }catch(e){toast(e.message,'bad')}}
+    async function requestPostGameAnalysis(){if(!state.game)return toast('Open a finished game first.');try{
+      const result=await api('/api/games/'+encodeURIComponent(state.game.id)+'/analyze',{method:'POST',body:'{}'});toast('Analysis queued. Open the Analysis tab for results.');switchView('analysis');
+    }catch(e){toast('Analysis unavailable: '+e.message,'bad')}}
+
+    async function startDailyPuzzle(){try{const d=await api('/api/training/daily/start',{method:'POST',body:'{}'});state.dailyMode=true;updateDailyPuzzle(d);await loadDailyLeaderboard();}
+      catch(e){toast(e.message,'bad')}}
+    function updateDailyPuzzle(d){state.dailyRun=d;
+      if(d.finished){state.dailyMode=false;state.currentPuzzle=null;state.puzzleSelected=null;renderPuzzleBoard();$('puzzleMove').value='';updatePuzzleSubmit();
+        $('dailySprintStatus').textContent=`Completed today: ${d.correct}/${d.total} · ${fmtClock(d.durationMs)} official elapsed. Come back tomorrow.`;
+        $('puzzleMeta').textContent='Daily Sprint completed. Use New Puzzle for regular practice.';$('puzzleReveal').disabled=true;loadDailyLeaderboard();return;}
+      state.currentPuzzle={...d.puzzle,attempted:false,solved:false};state.puzzleSelected=null;$('puzzleMove').value='';$('puzzleReveal').disabled=true;
+      $('dailySprintStatus').textContent=`Today's challenge: ${d.step+1}/${d.total} · Correct ${d.correct} · ${fmtClock(d.remainingMs)} remaining`;
+      $('puzzleMeta').textContent=`DAILY SPRINT: ${d.puzzle.side_to_move==='w'?'White':'Black'} to move. ${d.puzzle.theme}. Tap a piece and highlighted destination, then Check Move. No hints or retries.`;
+      renderPuzzleBoard();updatePuzzleSubmit();
+    }
+    async function submitDailyPuzzle(){if(!state.currentPuzzle)return;const move=updatePuzzleSubmit();if(!move)return toast('Select a legal move first.','warn');
+      $('submitPuzzle').disabled=true;try{const r=await api('/api/training/daily/answer',{method:'POST',body:JSON.stringify({moveUci:move})});
+        if(r.answered)toast(r.wasCorrect?'Correct! Next puzzle.':'Answer recorded. Next puzzle.',r.wasCorrect?'good':'warn');
+        updateDailyPuzzle(r);
+      }catch(e){toast(e.message,'bad');updatePuzzleSubmit()}}
+    async function loadDailyLeaderboard(){try{const r=await api('/api/training/daily/leaderboard');
+      $('dailySprintLeaderboard').innerHTML=r.players.map(p=>`<tr><td>${p.position}</td><td>${esc(p.name)} · ${esc(p.playerId)}</td><td>${p.correct}/${p.total}</td><td>${fmtClock(p.durationMs)}</td></tr>`).join('')||'<tr><td colspan="4">No completed runs today.</td></tr>';
+    }catch(e){$('dailySprintLeaderboard').textContent='Unavailable: '+e.message}}
     async function refreshAnalysis(){if(state.user?.role!=='player')return;try{const d=await api('/api/players/me/progress');const latest=d.analyses?.[0]?.summary;if(latest)renderAnalysis(latest);else $('analysisContent').textContent='No completed analysis yet.'}catch(e){toast(e.message,'bad')}}
     function renderAnalysis(a){if(!a)return;const lines=[`Game: ${a.gameId||''}`,`Result: ${a.result||'—'} · ${a.termination||'—'}`,`Difficulty: ${a.difficulty||'—'}`,'', 'Training priorities:',...(a.trainingPriorities||[]).map(x=>'• '+x),'',a.coachNote||''];if(a.reviewPoints?.length){lines.push('','Decision points:');for(const p of a.reviewPoints)lines.push(`• Ply ${p.ply}: played ${p.played}; engine candidate ${p.suggested}`)}if(a.error)lines.push('','Analysis engine note: '+a.error);$('analysisContent').textContent=lines.join('\n')}
 
     async function loadCoach(){if(!['coach','admin'].includes(state.user?.role))return;try{const d=await api('/api/coach/players');$('coachPlayers').innerHTML=d.players.length?d.players.map(p=>`<tr><td><strong>${esc(p.display_name)}</strong><br><span class="muted">${esc(p.username)}</span></td><td>${p.rating}</td><td>${p.progress.games}</td><td>${p.progress.wins}</td><td>${p.progress.puzzleCorrect}/${p.progress.puzzleAttempts}</td><td><button class="btn" data-assign="${p.id}">Assign</button></td></tr>`).join(''):'<tr><td colspan="6" class="empty">No athlete accounts.</td></tr>';document.querySelectorAll('[data-assign]').forEach(b=>b.onclick=()=>{$('assignOverlay').classList.remove('hidden');state.assignPlayerId=Number(b.dataset.assign)})}catch(e){toast(e.message,'bad')}}
     function confirmAssign(){const payload={playerId:state.assignPlayerId,title:$('assignTitle').value.trim(),description:$('assignDesc').value.trim(),category:$('assignCategory').value,targetCount:Number($('assignCount').value||10)};state.socket.emit('coach:assign-training',payload,r=>{if(!r?.ok)return toast(r?.error||'Assignment failed','bad');$('assignOverlay').classList.add('hidden');toast('Training assigned.');$('assignTitle').value='';$('assignDesc').value=''})}
 
+    async function loadAdminMonitor(){if(state.user?.role!=='admin')return;try{const d=await api('/api/admin/live-monitor');$('adminLiveMonitor').textContent=`Online users: ${d.uniqueOnlineUsers} · Connected sockets: ${d.connectedSockets} · Live PvP games: ${d.activeOnlineGames} · Pending challenges: ${d.pendingChallenges}`;}catch(e){$('adminLiveMonitor').textContent=e.message}}
     async function loadAdminSettings(){if(state.user?.role!=='admin')return;try{const d=await api('/api/admin/settings');const map=Object.fromEntries(d.settings.map(x=>[x.key,x.value]));$('settingAppName').value=map.app_name||'Chess Athlete Trainer';$('settingDifficulty').value=map.default_difficulty||'grandmaster';$('settingMaintenance').checked=map.maintenance==='true';$('settingRegistration').checked=map.allow_registration==='true'}catch(e){if(state.server)toast('Settings load failed: '+e.message,'bad')}}
     async function saveAdminSettings(){try{await api('/api/admin/settings',{method:'PUT',body:JSON.stringify({app_name:$('settingAppName').value.trim(),default_difficulty:$('settingDifficulty').value,maintenance:String($('settingMaintenance').checked),allow_registration:String($('settingRegistration').checked)})});await loadConfig();toast('System settings saved.')}catch(e){toast('Settings save failed: '+friendly(e.message),'bad')}}
 
@@ -242,18 +324,93 @@
     function esc(s){return String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}function fmtDate(s){try{return new Date(s+'Z').toLocaleDateString()}catch{return s||''}}
     function applyBoardTheme(theme){const safe=['emerald','classic','contrast'].includes(theme)?theme:'emerald';document.body.dataset.boardTheme=safe;$('boardTheme').value=safe;localStorage.setItem('chess_board_theme',safe);renderBoard();renderPuzzleBoard()}
     function updateSoundButton(){$('soundBtn').textContent=state.soundEnabled?'🔊':'🔇';$('soundBtn').setAttribute('aria-pressed',String(state.soundEnabled));$('soundBtn').title=state.soundEnabled?'Mute move sounds':'Enable move sounds'}
+    async function refreshArena(){
+      if(state.user?.role!=='player')return;
+      try{const [p,inbox,active]=await Promise.all([api('/api/arena/profile'),api('/api/arena/challenges'),api('/api/arena/active')]);
+        $('arenaPlayerCode').textContent=p.playerId;$('arenaMyStats').textContent=`${p.elo} Online Elo · ${p.rp} RP · ${p.tier} · ${p.wins} wins · ${p.puzzlesSolved} puzzles`;
+        $('arenaInbox').innerHTML=inbox.challenges.filter(c=>c.status==='pending'&&c.expires_ms>Date.now()).map(c=>{
+          const incoming=c.opponent_id===state.user.id;
+          return `<div class="card" style="padding:12px"><strong>${esc(incoming?c.challenger_name:c.opponent_name)}</strong> · ${c.rated?'Ranked':'Friendly'} · ${Math.round(c.initial_seconds/60)}m
+            <div class="btnRow">${incoming?`<button class="btn primary" data-challenge-response="${esc(c.id)}" data-accept="yes">Accept</button><button class="btn" data-challenge-response="${esc(c.id)}" data-accept="no">Decline</button>`:'<span class="muted">Waiting for acceptance…</span>'}</div></div>`;
+        }).join('')||'<div class="muted">No pending challenges.</div>';
+        document.querySelectorAll('[data-challenge-response]').forEach(el=>el.onclick=()=>respondChallenge(el.dataset.challengeResponse,el.dataset.accept==='yes'));
+        if(active.match&&(!state.pvp||state.pvp.id!==active.match.id))renderPvp(active.match);
+      }catch(e){if(state.socket?.connected)toast('Arena refresh: '+e.message,'bad')}
+    }
+    async function findArenaPlayers(){
+      const term=$('arenaSearch').value.trim();if(term.length<2)return toast('Enter at least 2 characters.','warn');
+      try{const data=await api('/api/arena/players?q='+encodeURIComponent(term));
+        $('arenaSearchResults').innerHTML=data.players.filter(x=>x.id!==state.user.id).map(p=>`<button class="btn" data-player="${esc(p.code)}" data-label="${esc(p.displayName)}">${esc(p.displayName)} · ${esc(p.code)} · ${p.rating} Elo · ${p.online?'🟢 Online':'⚪ Offline'}</button>`).join('')||'<span class="muted">Player not found.</span>';
+        document.querySelectorAll('[data-player]').forEach(b=>b.onclick=()=>{state.arenaTarget=b.dataset.player;$('arenaOpponentLabel').textContent=`Selected: ${b.dataset.label} (${state.arenaTarget})`;$('arenaChallenge').disabled=false});
+      }catch(e){toast(e.message,'bad')}
+    }
+    function challengePlayer(){if(!state.socket?.connected||!state.arenaTarget)return toast('Connect to the server and select a player.','warn');
+      const [initialSeconds,incrementSeconds]=$('arenaTime').value.split(',').map(Number);$('arenaChallenge').disabled=true;
+      state.socket.emit('pvp:challenge',{playerId:state.arenaTarget,initialSeconds,incrementSeconds,rated:$('arenaRated').checked},r=>{
+        $('arenaChallenge').disabled=false;if(!r?.ok)return toast(r?.error||'Challenge failed.','bad');toast('Challenge sent. Waiting for acceptance.');refreshArena();
+      });
+    }
+    function respondChallenge(challengeId,accept){if(!state.socket?.connected)return toast('Server connection required.','bad');
+      state.socket.emit('pvp:respond',{challengeId,accept},r=>{if(!r?.ok)return toast(r?.error||'Cannot respond.','bad');refreshArena();if(r.accepted)toast('Challenge accepted!')});
+    }
+    function resumePvp(){const gameId=state.pvp?.id||localStorage.getItem('chess_last_pvp');if(gameId&&state.socket?.connected)state.socket.emit('pvp:join',{gameId},r=>{if(r?.ok)renderPvp(r.snapshot)})}
+    function renderPvp(snap){if(!snap)return;state.pvp=snap;state.pvpSelected=null;state.pvpLegal=[];state.pvpPending=false;localStorage.setItem('chess_last_pvp',snap.id);
+      $('pvpGamePanel').classList.remove('hidden');$('pvpMatchTitle').textContent=`${snap.whiteName} vs ${snap.blackName}`;
+      $('pvpWhiteName').textContent=`White: ${snap.whiteName}`;$('pvpBlackName').textContent=`Black: ${snap.blackName}`;
+      $('pvpStatus').textContent=snap.status==='active'?(snap.activeColor===snap.yourColor?'Your turn':'Waiting for opponent')+` · ${snap.rated?'Ranked':'Friendly'} · You play ${snap.yourColor==='w'?'White':'Black'}`:`Finished: ${snap.result} (${snap.termination})`;
+      $('pvpResign').disabled=snap.status!=='active';$('pvpOfferDraw').disabled=snap.status!=='active';
+      $('pvpMoves').textContent=(snap.moves||[]).map(m=>`${m.ply}. ${m.san}`).join(' · ')||'No moves yet';
+      state.pvpClock={clocks:snap.clocks,activeColor:snap.activeColor,at:Date.now()};renderPvpClocks();renderPvpBoard();
+      if(!snap.drawOfferedBy)state.lastDrawPrompt=null;
+      if(snap.drawOfferedBy&&snap.drawOfferedBy!==state.user.id&&snap.status==='active'){
+        if(!state.lastDrawPrompt||state.lastDrawPrompt!==snap.id+':'+snap.drawOfferedBy){state.lastDrawPrompt=snap.id+':'+snap.drawOfferedBy;
+          const accept=confirm('Your opponent offered a draw. Accept?');state.socket.emit('pvp:respond-draw',{gameId:snap.id,accept},r=>{if(!r?.ok)toast(r.error,'bad')});}
+      }
+    }
+    function renderPvpClocks(){if(!state.pvpClock)return;const c={...state.pvpClock.clocks};if(state.pvp?.status==='active')c[state.pvpClock.activeColor]=Math.max(0,c[state.pvpClock.activeColor]-(Date.now()-state.pvpClock.at));
+      $('pvpClockW').textContent=fmtClock(c.w);$('pvpClockB').textContent=fmtClock(c.b);
+    }
+    setInterval(renderPvpClocks,250);
+    function renderPvpBoard(){const panel=$('pvpBoard');panel.innerHTML='';if(!state.pvp)return;
+      const files='abcdefgh'.split(''),ranks='12345678'.split(''),ordered=state.pvp.yourColor==='b'?ranks.flatMap(r=>[...files].reverse().map(f=>f+r)):[...ranks].reverse().flatMap(r=>files.map(f=>f+r));
+      const pieces=parseFen(state.pvp.fen),legal=new Set(state.pvpLegal.map(x=>x.to));
+      for(const sq of ordered){const f=sq.charCodeAt(0)-97,r=Number(sq[1]),piece=pieces[sq],el=document.createElement('button');el.type='button';el.className='sq '+(((f+r)%2)?'dark':'light');
+        if(state.pvpSelected===sq)el.classList.add('selected');if(legal.has(sq))el.classList.add('legal','quietTarget');
+        el.setAttribute('aria-label',`${sq}${piece?' '+pieceName[piece]:''}`);if(piece){const span=document.createElement('span');span.className='piece '+(piece===piece.toUpperCase()?'whitePiece':'blackPiece');span.textContent=pieceChar[piece];el.appendChild(span)}el.onclick=()=>pvpSquare(sq,piece);panel.appendChild(el);
+      }
+    }
+    function pvpSquare(sq,piece){const g=state.pvp;if(!g||g.status!=='active'||g.activeColor!==g.yourColor||state.pvpPending||!state.socket?.connected)return;
+      const own=piece&&(g.yourColor==='w'?piece===piece.toUpperCase():piece===piece.toLowerCase());
+      if(state.pvpSelected&&state.pvpLegal.some(m=>m.to===sq)){
+        const from=state.pvpSelected;const promotion=state.pvpLegal.find(m=>m.to===sq)?.promotion?'q':null;
+        state.pvpSelected=null;state.pvpLegal=[];state.pvpPending=true;renderPvpBoard();
+        const clientMoveId=globalThis.crypto?.randomUUID?.()||`move-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+        state.socket.emit('pvp:move',{gameId:g.id,from,to:sq,promotion,clientMoveId,expectedVersion:g.version},r=>{state.pvpPending=false;if(!r?.ok){toast(r?.error||'Move rejected','bad');resumePvp()}else if(r.snapshot)renderPvp(r.snapshot)});return;
+      }
+      if(own){state.pvpSelected=sq;state.pvpLegal=[];renderPvpBoard();state.socket.emit('pvp:legal-moves',{gameId:g.id,from:sq},r=>{if(!r?.ok||state.pvp?.version!==r.version||state.pvpSelected!==sq)return;state.pvpLegal=r.moves||[];renderPvpBoard()});}
+      else{state.pvpSelected=null;state.pvpLegal=[];renderPvpBoard();}
+    }
+    async function loadRankings(){try{const d=await api('/api/arena/leaderboard?type='+encodeURIComponent(state.rankType));
+      $('rankingsBody').innerHTML=d.players.map(p=>`<tr><td>${p.position}</td><td>${esc(p.playerId)}</td><td>${esc(p.displayName)}</td><td>${p.rp}</td><td>${p.elo}</td><td>${p.puzzlesSolved}</td><td>${esc(p.tier)}</td></tr>`).join('')||'<tr><td colspan="7">No players yet.</td></tr>';
+      document.querySelectorAll('[data-ranking]').forEach(b=>b.classList.toggle('primary',b.dataset.ranking===state.rankType));
+    }catch(e){if(state.token)toast('Rankings: '+e.message,'bad')}}
     function bindUi(){
       document.querySelectorAll('.navBtn[data-view]').forEach(b=>b.onclick=()=>switchView(b.dataset.view));
       $('logoutBtn').onclick=()=>logout(true);$('loginForm').onsubmit=login;$('registerForm').onsubmit=register;
       $('openRegisterBtn').onclick=()=>{$('loginMsg').textContent='';$('registerOverlay').classList.remove('hidden');$('registerDisplay').focus()};$('cancelRegister').onclick=()=>$('registerOverlay').classList.add('hidden');
-      $('newGameBtn').onclick=openNewGame;$('dashNewGame').onclick=()=>{switchView('game');openNewGame()};$('cancelNewGame').onclick=()=>$('newGameOverlay').classList.add('hidden');$('confirmNewGame').onclick=startGame;$('resumeBtn').onclick=resumeLatest;
+      $('newGameBtn').onclick=openNewGame;$('dashNewGame').onclick=()=>{switchView('game');openNewGame()};$('cancelNewGame').onclick=()=>$('newGameOverlay').classList.add('hidden');$('confirmNewGame').onclick=startGame;$('resumeBtn').onclick=resumeLatest;$('savedGamesBtn').onclick=openSavedGames;$('closeSavedGames').onclick=()=>$('savedGamesOverlay').classList.add('hidden');$('downloadPgnBtn').onclick=()=>downloadPgn();$('analyzeGameBtn').onclick=requestPostGameAnalysis;
       $('hintBtn').onclick=requestHint;$('resignBtn').onclick=resign;$('drawBtn').onclick=offerDraw;$('claimDrawBtn').onclick=claimDraw;
-      $('refreshTraining').onclick=loadTraining;$('loadPuzzle').onclick=loadPuzzle;$('submitPuzzle').onclick=submitPuzzle;$('puzzleMove').oninput=updatePuzzleSubmit;$('puzzleMove').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();if(!$('submitPuzzle').disabled)submitPuzzle()}};
+      $('arenaRefresh').onclick=refreshArena;$('arenaCopyId').onclick=()=>{const id=$('arenaPlayerCode').textContent;navigator.clipboard?.writeText(id).then(()=>toast('Player ID copied')).catch(()=>toast('Copy your ID: '+id))};
+      $('arenaFind').onclick=findArenaPlayers;$('arenaSearch').onkeydown=e=>{if(e.key==='Enter')findArenaPlayers()};$('arenaChallenge').onclick=challengePlayer;
+      $('pvpResign').onclick=()=>{if(state.pvp&&confirm('Resign this online match?'))state.socket?.emit('pvp:resign',{gameId:state.pvp.id},r=>{if(!r?.ok)toast(r?.error,'bad')})};
+      $('pvpOfferDraw').onclick=()=>{if(state.pvp)state.socket?.emit('pvp:offer-draw',{gameId:state.pvp.id},r=>toast(r?.ok?'Draw offered.':r?.error,'warn'))};
+      $('rankingsRefresh').onclick=loadRankings;document.querySelectorAll('[data-ranking]').forEach(b=>b.onclick=()=>{state.rankType=b.dataset.ranking;loadRankings()});
+      $('startDailyPuzzle').onclick=startDailyPuzzle;$('refreshDailyLeaderboard').onclick=loadDailyLeaderboard;$('refreshTraining').onclick=loadTraining;$('loadPuzzle').onclick=loadPuzzle;$('puzzleReveal').onclick=revealPuzzle;$('submitPuzzle').onclick=submitPuzzle;$('puzzleMove').oninput=updatePuzzleSubmit;$('puzzleMove').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();if(!$('submitPuzzle').disabled)submitPuzzle()}};
       $('refreshAnalysis').onclick=refreshAnalysis;$('refreshCoach').onclick=loadCoach;
       document.querySelectorAll('.promoBtn').forEach(b=>b.onclick=()=>choosePromotion(b.dataset.promo));$('cancelPromotion').onclick=()=>{state.pendingPromotion=null;$('promotionOverlay').classList.add('hidden')};
       $('cancelAssign').onclick=()=>$('assignOverlay').classList.add('hidden');$('confirmAssign').onclick=confirmAssign;$('createUserBtn').onclick=createUser;$('backupBtn').onclick=createBackup;$('saveSettingsBtn').onclick=saveAdminSettings;
       $('boardTheme').onchange=()=>applyBoardTheme($('boardTheme').value);$('soundBtn').onclick=()=>{state.soundEnabled=!state.soundEnabled;localStorage.setItem('chess_sound',state.soundEnabled?'on':'off');updateSoundButton();if(state.soundEnabled)sound('move')};
-      window.addEventListener('keydown',e=>{if(e.key!=='Escape')return;['newGameOverlay','promotionOverlay','assignOverlay','registerOverlay'].forEach(id=>$(id).classList.add('hidden'))});
+      window.addEventListener('keydown',e=>{if(e.key!=='Escape')return;['newGameOverlay','promotionOverlay','assignOverlay','registerOverlay','savedGamesOverlay'].forEach(id=>$(id).classList.add('hidden'))});
       window.addEventListener('beforeinstallprompt',(e)=>{e.preventDefault();state.deferredInstall=e;$('installBtn').classList.remove('hidden')});$('installBtn').onclick=async()=>{if(!state.deferredInstall)return;try{state.deferredInstall.prompt();await state.deferredInstall.userChoice}finally{state.deferredInstall=null;$('installBtn').classList.add('hidden')}};
     }
     async function init(){bindUi();applyBoardTheme(localStorage.getItem('chess_board_theme')||'emerald');updateSoundButton();renderTurn();renderPuzzleBoard();if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});await Promise.allSettled([loadConfig(),checkHealth()]);setInterval(checkHealth,30000);if(!(await restoreSession())){$('loginOverlay').classList.remove('hidden')}else{await Promise.allSettled([refreshProgress(),loadTraining()]);const last=localStorage.getItem('last_game_id');if(last&&state.user?.role==='player')state.socket?.emit('game:resume',{gameId:last},r=>{if(r?.ok)applySnapshot(r.snapshot)})}}
