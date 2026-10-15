@@ -1,5 +1,5 @@
-const CACHE='chess-athlete-shell-v7-online-arena-rp-puzzles';
-const SHELL=['./','./index.html','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png','./icons/icon-maskable-512.png'];
+const CACHE='chess-athlete-shell-v8-competitive-board-pvp';
+const SHELL=['./','./index.html','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png','./icons/icon-maskable-512.png','./assets/pieces/wk.svg','./assets/pieces/wq.svg','./assets/pieces/wr.svg','./assets/pieces/wb.svg','./assets/pieces/wn.svg','./assets/pieces/wp.svg','./assets/pieces/bk.svg','./assets/pieces/bq.svg','./assets/pieces/br.svg','./assets/pieces/bb.svg','./assets/pieces/bn.svg','./assets/pieces/bp.svg'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(SHELL)).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('chess-athlete-shell-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});
 self.addEventListener('fetch',e=>{
